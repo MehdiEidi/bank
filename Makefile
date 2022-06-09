@@ -24,4 +24,7 @@ test:
 tidy:
 	go mod tidy
 
-.PHONY: postgres createdb dropdb migrateup migratedown sqlc test tidy
+server: 
+	go run main.go
+
+.PHONY: postgres createdb dropdb migrateup migratedown sqlc test tidy server
