@@ -5,6 +5,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/mehdieidi/bank/pkg/password"
 	"github.com/mehdieidi/bank/pkg/rand"
 	"github.com/stretchr/testify/require"
 )
@@ -39,9 +40,11 @@ func TestGetUser(t *testing.T) {
 }
 
 func createRandomUser() (User, CreateUserParams, error) {
+	hashedPassword, _ := password.Hash(rand.RandomString(6))
+
 	arg := CreateUserParams{
 		Username:       rand.RandomOwner(),
-		HashedPassword: "secret",
+		HashedPassword: hashedPassword,
 		FullName:       rand.RandomOwner(),
 		Email:          rand.RandomEmail(),
 	}
