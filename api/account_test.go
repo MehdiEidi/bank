@@ -18,7 +18,8 @@ import (
 )
 
 func TestGetAccount(t *testing.T) {
-	account := randomAccount()
+	user, _ := randomUser(t)
+	account := randomAccount(user.Username)
 
 	testCases := []struct {
 		name          string
@@ -102,10 +103,10 @@ func requireBodyMatchAccount(t *testing.T, body *bytes.Buffer, account db.Accoun
 	require.Equal(t, account, gotAccount)
 }
 
-func randomAccount() db.Account {
+func randomAccount(owner string) db.Account {
 	return db.Account{
 		ID:       rand.RandomInt(1, 1000),
-		Owner:    rand.RandomOwner(),
+		Owner:    owner,
 		Balance:  rand.RandomMoney(),
 		Currency: rand.RandomCurrency(),
 	}

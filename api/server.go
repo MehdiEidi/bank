@@ -14,23 +14,28 @@ type Server struct {
 
 func NewServer(store db.Store) *Server {
 	server := &Server{store: store}
-	router := gin.Default()
 
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
 		v.RegisterValidation("currency", validCurrency)
 	}
 
+	server.setupRouter()
+
+	return server
+}
+
+func (server *Server) setupRouter() {
+	router := gin.Default()
+
 	router.POST("/users", server.createUser)
 
 	router.POST("/accounts", server.createAccount)
 	router.GET("/accounts/:id", server.getAccount)
-	router.GET("/accounts", server.listAccount)
+	router.GET("/accounts", server.listAccounts)
 
 	router.POST("/transfers", server.createTransfer)
 
 	server.router = router
-
-	return server
 }
 
 func (server *Server) Start(address string) error {
