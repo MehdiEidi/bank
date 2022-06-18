@@ -9,22 +9,13 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func createRandomEntry(account Account) (Entry, CreateEntryParams, error) {
+func createRandomEntry(t *testing.T, account Account) Entry {
 	arg := CreateEntryParams{
 		AccountID: account.ID,
 		Amount:    rand.RandomMoney(),
 	}
 
 	entry, err := testQueries.CreateEntry(context.Background(), arg)
-
-	return entry, arg, err
-}
-
-func TestCreateEntry(t *testing.T) {
-	account, _, _ := createRandomAccount()
-
-	entry, arg, err := createRandomEntry(account)
-
 	require.NoError(t, err)
 	require.NotEmpty(t, entry)
 
@@ -33,14 +24,19 @@ func TestCreateEntry(t *testing.T) {
 
 	require.NotZero(t, entry.ID)
 	require.NotZero(t, entry.CreatedAt)
+
+	return entry
+}
+
+func TestCreateEntry(t *testing.T) {
+	account := createRandomAccount(t)
+	createRandomEntry(t, account)
 }
 
 func TestGetEntry(t *testing.T) {
-	account, _, _ := createRandomAccount()
-	entry1, _, _ := createRandomEntry(account)
-
+	account := createRandomAccount(t)
+	entry1 := createRandomEntry(t, account)
 	entry2, err := testQueries.GetEntry(context.Background(), entry1.ID)
-
 	require.NoError(t, err)
 	require.NotEmpty(t, entry2)
 
@@ -51,10 +47,9 @@ func TestGetEntry(t *testing.T) {
 }
 
 func TestListEntries(t *testing.T) {
-	account, _, _ := createRandomAccount()
-
+	account := createRandomAccount(t)
 	for i := 0; i < 10; i++ {
-		createRandomEntry(account)
+		createRandomEntry(t, account)
 	}
 
 	arg := ListEntriesParams{
@@ -64,7 +59,6 @@ func TestListEntries(t *testing.T) {
 	}
 
 	entries, err := testQueries.ListEntries(context.Background(), arg)
-
 	require.NoError(t, err)
 	require.Len(t, entries, 5)
 

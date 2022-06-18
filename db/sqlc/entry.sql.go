@@ -11,10 +11,10 @@ import (
 
 const createEntry = `-- name: CreateEntry :one
 INSERT INTO entries (
-    account_id,
-    amount
+  account_id,
+  amount
 ) VALUES (
-    $1, $2
+  $1, $2
 ) RETURNING id, account_id, amount, created_at
 `
 
@@ -36,7 +36,7 @@ func (q *Queries) CreateEntry(ctx context.Context, arg CreateEntryParams) (Entry
 }
 
 const getEntry = `-- name: GetEntry :one
-SELECT id, account_id, amount, created_at FROM entries 
+SELECT id, account_id, amount, created_at FROM entries
 WHERE id = $1 LIMIT 1
 `
 

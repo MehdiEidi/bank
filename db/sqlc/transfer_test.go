@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func createRandomTransfer(account1, account2 Account) (Transfer, CreateTransferParams, error) {
+func createRandomTransfer(t *testing.T, account1, account2 Account) Transfer {
 	arg := CreateTransferParams{
 		FromAccountID: account1.ID,
 		ToAccountID:   account2.ID,
@@ -17,16 +17,6 @@ func createRandomTransfer(account1, account2 Account) (Transfer, CreateTransferP
 	}
 
 	transfer, err := testQueries.CreateTransfer(context.Background(), arg)
-
-	return transfer, arg, err
-}
-
-func TestCreateTransfer(t *testing.T) {
-	account1, _, _ := createRandomAccount()
-	account2, _, _ := createRandomAccount()
-
-	transfer, arg, err := createRandomTransfer(account1, account2)
-
 	require.NoError(t, err)
 	require.NotEmpty(t, transfer)
 
@@ -36,16 +26,22 @@ func TestCreateTransfer(t *testing.T) {
 
 	require.NotZero(t, transfer.ID)
 	require.NotZero(t, transfer.CreatedAt)
+
+	return transfer
+}
+
+func TestCreateTransfer(t *testing.T) {
+	account1 := createRandomAccount(t)
+	account2 := createRandomAccount(t)
+	createRandomTransfer(t, account1, account2)
 }
 
 func TestGetTransfer(t *testing.T) {
-	account1, _, _ := createRandomAccount()
-	account2, _, _ := createRandomAccount()
-
-	transfer1, _, _ := createRandomTransfer(account1, account2)
+	account1 := createRandomAccount(t)
+	account2 := createRandomAccount(t)
+	transfer1 := createRandomTransfer(t, account1, account2)
 
 	transfer2, err := testQueries.GetTransfer(context.Background(), transfer1.ID)
-
 	require.NoError(t, err)
 	require.NotEmpty(t, transfer2)
 
@@ -57,12 +53,12 @@ func TestGetTransfer(t *testing.T) {
 }
 
 func TestListTransfer(t *testing.T) {
-	account1, _, _ := createRandomAccount()
-	account2, _, _ := createRandomAccount()
+	account1 := createRandomAccount(t)
+	account2 := createRandomAccount(t)
 
 	for i := 0; i < 5; i++ {
-		createRandomTransfer(account1, account2)
-		createRandomTransfer(account2, account1)
+		createRandomTransfer(t, account1, account2)
+		createRandomTransfer(t, account2, account1)
 	}
 
 	arg := ListTransfersParams{
@@ -73,7 +69,6 @@ func TestListTransfer(t *testing.T) {
 	}
 
 	transfers, err := testQueries.ListTransfers(context.Background(), arg)
-
 	require.NoError(t, err)
 	require.Len(t, transfers, 5)
 

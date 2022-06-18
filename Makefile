@@ -22,7 +22,7 @@ migratedown1:
 	migrate -path db/migrations -database "$(DB_URL)" -verbose down 1
 
 sqlc:
-	sqlc generate -f db/sqlc_conf/sqlc.yaml
+	sqlc generate -f db/sqlc_config/sqlc.yaml
 
 test:
 	go test -v -cover ./...
